@@ -33,9 +33,28 @@ PODFilter::PODFilter(QWidget *parent)
 		playing = false;
 	});
 
-	QObject::connect(&t, &QTimer::timeout, this, &PODFilter::plotCurrent);
 
-	plotter->setAmplifier(15);
+	QObject::connect(bar, &TransportBar::setTo, this, [&](const size_t& v)
+	{
+		position = v;
+		if(!playing && position < data.size())
+		{
+			plotter->clear();
+			plotter->addPoint(data[position].X, data[position].Y);
+		}
+	});
+
+	QObject::connect(bar, &TransportBar::rewind, this, [&]{
+		bar->setBarPos(0);
+	});
+
+	QObject::connect(bar, &TransportBar::forward, this, [&]{
+		bar->setBarPos(data.size() - 1);
+	});
+
+	plotter->setAmplifier(5);
+
+	QObject::connect(&t, &QTimer::timeout, this, &PODFilter::plotCurrent);
 }
 
 void PODFilter::play()

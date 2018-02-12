@@ -19,24 +19,23 @@ TransportBar::TransportBar(QWidget *parent) : QWidget(parent),
 	QObject::connect(bplay, &QPushButton::clicked, this, [&]{emit play();});
 	QObject::connect(bpause, &QPushButton::clicked, this, [&]{emit pause();});
 	QObject::connect(bforward, &QPushButton::clicked, this, [&]{emit forward();});
-	QObject::connect(position, &QSlider::sliderMoved, this, [&](const size_t& value){
-		qDebug() << value;
-		float fvalue(value/100.f);
-		size_t to(fvalue*max);
-		qDebug() << to;
+	QObject::connect(position, &QSlider::valueChanged, this, [&](const size_t& value){
+		emit setTo(value);
 	});
+
+//	QObject::connect(this, &TransportBar::setTo, this, [&](const size_t& v){
+//		qDebug() << "setTo(" << v << ")";
+//	});
 }
 
 
 void TransportBar::setMax(size_t m)
 {
 	max = m;
+	position->setRange(0, max);
 }
 
 void TransportBar::setBarPos(size_t pos)
 {
-	float fpos(pos), fmax(max);
-	float fvalue ((fpos/fmax) * 100.f);
-	int value(fvalue);
-	position->setValue(value);
+	position->setValue(pos);
 }
