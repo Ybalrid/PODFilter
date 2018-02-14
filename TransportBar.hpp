@@ -7,6 +7,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QLabel>
+#include <QCheckBox>
 
 class TransportBar : public QWidget
 {
@@ -20,6 +22,8 @@ class TransportBar : public QWidget
 		void rewind();
 		void forward();
 		void setTo(size_t);
+
+		void filtred(bool);
 	public slots:
 
 		void setMax(size_t m);
@@ -31,6 +35,7 @@ class TransportBar : public QWidget
 		QPushButton *bplay, *bpause, *bforward, *brewind;
 		size_t current, max;
 		QSlider* position;
+		QCheckBox* bfiltred;
 };
 
 #endif // TRANSPORTBAR_HPP

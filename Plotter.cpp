@@ -39,17 +39,34 @@ void Plotter::clear()
 	scene.addEllipse(0,0,25,25, bluePen, blueFill);
 
 }
-
-void Plotter::addPoint(qreal x, qreal y)
+template <typename T, typename S> T lerp(T a, T b, S w)
 {
-	qDebug() << "drawing " << x << "x" << y;
+	return  a + w * (b - a);
+}
+std::tuple<qreal, qreal> Plotter::filter(qreal x, qreal y)
+{
+	static int fx, fy;
+
 	std::rotate(std::rbegin(xbuf), std::rbegin(xbuf)+1, std::rend(xbuf));
 	std::rotate(std::rbegin(ybuf), std::rbegin(ybuf)+1, std::rend(ybuf));
 	xbuf[0] = x;
 	ybuf[0] = y;
-	scene.addEllipse(amplifier * x, amplifier * y, 10, 10, QPen(), greenFill);
 
-	int fx = 0, fy = 0;;
+	const float scale = 0.9f;
+
+	if(std::abs(xbuf[0] - xbuf[1]) > 5 && std::abs(xbuf[0]) > 10)
+	{
+		qDebug() << "Weird data right here! o.O";
+		xbuf[0] = lerp(xbuf[0], xbuf[2], scale);
+
+	}
+	if(std::abs(ybuf[0] - ybuf[1]) > 5 && std::abs(ybuf[0]) > 10)
+	{
+		qDebug() << "Weird data right here! o.O";
+		ybuf[0] = lerp(ybuf[0], ybuf[2], scale);
+	}
+
+	fx = fy = 0;
 	for(int i = 0; i < dim; ++i)
 	{
 		fx += xbuf[i];
@@ -59,9 +76,24 @@ void Plotter::addPoint(qreal x, qreal y)
 	fx /= dim;
 	fy /= dim;
 
-	scene.addEllipse(amplifier * fx, amplifier * fy, 5, 5, QPen(), redFill);
+	return std::tie(fx, fy);
+}
+
+void Plotter::addPoint(qreal x, qreal y)
+{
+	qDebug() << "drawing " << x << "x" << y;
+	auto filtered = filter(x, y);
+	if(showFiltred)
+		scene.addEllipse(amplifier * std::get<0>(filtered), amplifier * std::get<1>(filtered), 10, 10, QPen(), redFill);
+	else
+		scene.addEllipse(amplifier * x, amplifier * y, 10, 10, QPen(), greenFill);
 
 	view->update();
+}
+
+void Plotter::setFiltred(bool s)
+{
+	showFiltred = s;
 }
 
 void Plotter::setFilterSize(int d)

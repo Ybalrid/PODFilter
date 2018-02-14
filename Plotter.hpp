@@ -10,6 +10,7 @@
 #include <QBrush>
 
 #include <algorithm>
+#include <tuple>
 
 class Plotter : public QWidget
 {
@@ -18,14 +19,17 @@ class Plotter : public QWidget
 		explicit Plotter(QWidget *parent = nullptr);
 		void setAmplifier(float amp);
 		void setFilterSize(int dim);
+		std::tuple<qreal, qreal>  filter(qreal x, qreal y);
 
 	signals:
 
 	public slots:
 		void clear();
 		void addPoint(qreal x, qreal y);
+		void setFiltred(bool);
 
 	private:
+		bool showFiltred;
 		QHBoxLayout* mainLayout;
 		QGraphicsView* view;
 		QGraphicsScene scene;

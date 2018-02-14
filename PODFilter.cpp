@@ -55,6 +55,8 @@ PODFilter::PODFilter(QWidget *parent)
 	plotter->setAmplifier(5);
 
 	QObject::connect(&t, &QTimer::timeout, this, &PODFilter::plotCurrent);
+
+	QObject::connect(bar, &TransportBar::filtred, plotter, &Plotter::setFiltred);
 }
 
 void PODFilter::play()
