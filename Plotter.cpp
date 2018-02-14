@@ -36,13 +36,15 @@ void Plotter::setAmplifier(float amp)
 void Plotter::clear()
 {
 	scene.clear();
-	scene.addEllipse(0,0,25,25, bluePen, blueFill);
+	scene.addEllipse(0, 0, 25, 25, bluePen, blueFill);
 
 }
+
 template <typename T, typename S> T lerp(T a, T b, S w)
 {
 	return  a + w * (b - a);
 }
+
 std::tuple<qreal, qreal> Plotter::filter(qreal x, qreal y)
 {
 	static int fx, fy;
